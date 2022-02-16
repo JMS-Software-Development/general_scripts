@@ -117,14 +117,14 @@ DJANGO_KEY=$(python -c 'from django.core.management.utils import get_random_secr
 # Create hook
 echo "Creating deployment hook"
 cd /home/$USER_NAME/$PROJECT_NAME.git/hooks
-wget https://raw.githubusercontent.com/MedianaSoftware/general_scripts/master/post-receive -O /home/$USER_NAME/$PROJECT_NAME.git/hooks/post-receive
+wget https://raw.githubusercontent.com/JMS-Software-Development/general_scripts/master/post-receive -O /home/$USER_NAME/$PROJECT_NAME.git/hooks/post-receive
 sed -i "s/\$USER_NAME/$USER_NAME/g" /home/$USER_NAME/$PROJECT_NAME.git/hooks/post-receive
 chmod +x post-receive
 chown -R $USER_NAME:$USER_NAME /home/$USER_NAME/
 
 # Create services
 echo "Creating daphne service"
-wget https://raw.githubusercontent.com/MedianaSoftware/general_scripts/master/django-daphne.service -O /etc/systemd/system/daphne.service
+wget https://raw.githubusercontent.com/JMS-Software-Development/general_scripts/master/django-daphne.service -O /etc/systemd/system/daphne.service
 sed -i "s/\$DJANGO_SECRET/$DJANGO_KEY/g" /etc/systemd/system/django-daphne.service
 sed -i "s/\$PROJECT_NAME/$PROJECT_NAME/g" /etc/systemd/system/django-daphne.service
 sed -i "s/\$SERVER_NAME/$SERVER_NAME/g" /etc/systemd/system/django-daphne.service
@@ -150,7 +150,7 @@ echo
 # Set up nginx
 echo "Setting up nginx"
 rm /etc/nginx/sites-enabled/default
-wget https://raw.githubusercontent.com/MedianaSoftware/general_scripts/master/nginx-config -O /etc/nginx/sites-available/$PROJECT_NAME
+wget https://raw.githubusercontent.com/JMS-Software-Development/general_scripts/master/nginx-config -O /etc/nginx/sites-available/$PROJECT_NAME
 sed -i "s/\$PROJECT_NAME/$PROJECT_NAME/g" /etc/nginx/sites-available/$PROJECT_NAME
 sed -i "s/\$SERVER_NAME/$SERVER_NAME/g" /etc/nginx/sites-available/$PROJECT_NAME
 
@@ -167,7 +167,7 @@ chown -R $USER_NAME:$USER_NAME "/var/www/$PROJECT_NAME/static/"
 if [ $SETUP_POSTGRES = "y" ]
 then
     echo "Installing postgres..."
-    wget https://github.com/MedianaSoftware/general_scripts/blob/master/setup_postgres.sh -O /home/$USER_NAME/setup_postgres.sh
+    wget https://raw.githubusercontent.com/JMS-Software-Development/general_scripts/master/setup_postgres.sh -O /home/$USER_NAME/setup_postgres.sh
     chmod +x /home/$USER_NAME/setup_postgres.sh
     POSTGRES_USER="$PROJECT_NAME"_user POSTGRES_DB="$PROJECT_NAME" . /home/$USER_NAME/setup_postgres.sh
 fi
@@ -175,7 +175,7 @@ fi
 if [ $SETUP_CERTBOT = "y" ]
 then
     echo "Setting up certbot..."
-    wget https://raw.githubusercontent.com/MedianaSoftware/general_scripts/master/setup_certbot.sh -O /home/$USER_NAME/setup_certbot.sh
+    wget https://raw.githubusercontent.com/JMS-Software-Development/general_scripts/master/setup_certbot.sh -O /home/$USER_NAME/setup_certbot.sh
     bash /home/$USER_NAME/setup_certbot.sh
 fi
 
