@@ -1,11 +1,11 @@
 #!/bin/bash
-TARGET="/home/mediana/$PROJECT_NAME"
-REPO="/home/mediana/$PROJECT_NAME.git"
-TEMP="/home/mediana/tmp"
+TARGET="/home/$USER_NAME/$PROJECT_NAME"
+REPO="/home/$USER_NAME/$PROJECT_NAME.git"
+TEMP="/home/$USER_NAME/tmp"
 
-GIT_DIR="/home/mediana/$PROJECT_NAME.git"
+GIT_DIR="/home/$USER_NAME/$PROJECT_NAME.git"
 BRANCH=master
-LOGFILE="/home/mediana/$PROJECT_NAME-logs/deploy.log"
+LOGFILE="/home/$USER_NAME/$PROJECT_NAME-logs/deploy.log"
 
 print_double() {
     echo -e $1;
@@ -23,13 +23,13 @@ do
 
   # backup database
   # print_double "Backing up database to deploy-$(date).json"
-  # cd /home/mediana/$PROJECT_NAME >> $LOGFILE
-  # pg_dump -U jaduser -W -w -F c jad > /home/mediana/database-backups/deploy-$(date).zip
+  # cd /home/$USER_NAME/$PROJECT_NAME >> $LOGFILE
+  # pg_dump -U jaduser -W -w -F c jad > /home/$USER_NAME/database-backups/deploy-$(date).zip
 
-  cd /home/mediana/
+  cd /home/$USER_NAME/
 
   # Save untracked files
-  cp $TARGET/$PROJECT_NAME/production.py /home/mediana
+  cp $TARGET/$PROJECT_NAME/production.py /home/$USER_NAME
 
   # Update files
   print_double "Updating files"
@@ -41,17 +41,20 @@ do
   ##
   
   # Restore untracked files
-  mv /home/mediana/production.py $TARGET/$PROJECT_NAME/
+  mv /home/$USER_NAME/production.py $TARGET/$PROJECT_NAME/
  
 #    source /home/ubuntu/venv/bin/activate
-  cd /home/mediana/$PROJECT_NAME >> $LOGFILE
+  cd /home/$USER_NAME/$PROJECT_NAME >> $LOGFILE
 
-  print_double "\nrunning npm install"
-  npm install
-  print_double "\nrunning npm build"
-  npm run build
+  if [ $USE_NODE = "y" ]
+  then
+    print_double "\nrunning npm install"
+    npm install
+    print_double "\nrunning npm build"
+    npm run build
+  fi
   
-  source /home/mediana/venv/bin/activate
+  source /home/$USER_NAME/venv/bin/activate
   print_double "\nRunning pip install"
   pip install -r requirements.txt >> $LOGFILE
   print_double "\nRunning manage.py migrate"
