@@ -53,7 +53,7 @@ do
   fi
   
   print_double "\nRunning pip install"
-  pipenv run install >> $LOGFILE
+  pipenv install >> $LOGFILE
   print_double "\nRunning manage.py migrate"
   pipenv run env DJANGO_SECRET_KEY=none DJANGO_ALLOWED_HOSTS=127.0.0.1 ./manage.py migrate >> $LOGFILE
   print_double "\nRunning manage.py collectstatic"
