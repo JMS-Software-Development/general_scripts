@@ -38,12 +38,10 @@ do
 
   rm -rf $TARGET
   mv $TEMP $TARGET
-  ##
   
   # Restore untracked files
   mv /home/$USER_NAME/production.py $TARGET/$PROJECT_NAME/
  
-#    source /home/ubuntu/venv/bin/activate
   cd /home/$USER_NAME/$PROJECT_NAME >> $LOGFILE
 
   if [ $USE_NODE = "y" ]
@@ -54,13 +52,12 @@ do
     npm run build
   fi
   
-  source /home/$USER_NAME/venv/bin/activate
   print_double "\nRunning pip install"
-  pip install -r requirements.txt >> $LOGFILE
+  pipenv run install >> $LOGFILE
   print_double "\nRunning manage.py migrate"
-  env DJANGO_SECRET_KEY=none DJANGO_ALLOWED_HOSTS=127.0.0.1 ./manage.py migrate >> $LOGFILE
+  pipenv run env DJANGO_SECRET_KEY=none DJANGO_ALLOWED_HOSTS=127.0.0.1 ./manage.py migrate >> $LOGFILE
   print_double "\nRunning manage.py collectstatic"
-  env DJANGO_SECRET_KEY=none DJANGO_ALLOWED_HOSTS=127.0.0.1 ./manage.py collectstatic --noinput >> $LOGFILE
+  pipenv run env DJANGO_SECRET_KEY=none DJANGO_ALLOWED_HOSTS=127.0.0.1 ./manage.py collectstatic --noinput >> $LOGFILE
 
   print_double "\nRestarting services"
   sudo systemctl restart daphne celery celerybeat
