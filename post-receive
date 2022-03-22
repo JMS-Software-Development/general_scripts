@@ -19,7 +19,7 @@ do
   print_double "Deploying commit $(git rev-parse --short HEAD) from branch: $BRANCH"
 
   print_double "Stopping Services"
-  sudo systemctl stop daphne celery celerybeat
+  sudo systemctl stop django-daphne # celery celerybeat
 
   # backup database
   # print_double "Backing up database to deploy-$(date).json"
@@ -52,7 +52,8 @@ do
     npm run build
   fi
   
-  print_double "\nRunning pip install"
+  # source /home/$USER_NAME/venv/bin/activate
+  print_double "\nRunning pipenv install"
   pipenv install >> $LOGFILE
   print_double "\nRunning manage.py migrate"
   pipenv run env DJANGO_SECRET_KEY=none DJANGO_ALLOWED_HOSTS=127.0.0.1 ./manage.py migrate >> $LOGFILE
@@ -60,7 +61,7 @@ do
   pipenv run env DJANGO_SECRET_KEY=none DJANGO_ALLOWED_HOSTS=127.0.0.1 ./manage.py collectstatic --noinput >> $LOGFILE
 
   print_double "\nRestarting services"
-  sudo systemctl restart daphne celery celerybeat
+  sudo systemctl restart django-daphne celery celerybeat
 
   echo "Deployment complete, logs can be found at " $LOGFILE
   print_double "Deployment complete"

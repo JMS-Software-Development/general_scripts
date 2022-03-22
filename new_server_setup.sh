@@ -21,7 +21,7 @@ echo PROJECT_NAME=$PROJECT_NAME >> /etc/environment
 echo USE_NODE=$SETUP_NODE >> /etc/environment
 
 apt update
-apt install -y nginx python3-venv python3-wheel gcc python3-dev redis-server 
+apt install -y nginx python3-venv python3-wheel gcc python3-dev redis-server pipenv
 
 if [ $SETUP_NODE = "y" ]
 then
@@ -60,9 +60,9 @@ DEBUG = False
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'asjklfhaskldjfhasjklfhklasjdhf')
 
 STATIC_ROOT = \"/var/www/$PROJECT_NAME/static\"
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, \"static\"),
-]
+#STATICFILES_DIRS = [
+#    os.path.join(BASE_DIR, \"static\"),
+#]
 
 LOG_BASE_PATH = \"/home/$USER_NAME/$PROJECT_NAME-logs/\"
 LOGGING = {
@@ -101,10 +101,12 @@ LOGGING = {
 
 " > /home/$USER_NAME/$PROJECT_NAME/$PROJECT_NAME/production.py
 
-cd ~
-python3 -m venv /home/$USER_NAME/venv
-source /home/$USER_NAME/venv/bin/activate
-pip3 install wheel daphne django
+cd /home/$USER_NAME/$PROJECT_NAME/
+# pipenv 
+# python3 -m venv /home/$USER_NAME/venv
+
+# source /home/$USER_NAME/venv/bin/activate
+pipenv install wheel daphne django
 
 # Create repository
 mkdir -p /home/$USER_NAME/$PROJECT_NAME.git
@@ -112,7 +114,7 @@ cd /home/$USER_NAME/$PROJECT_NAME.git
 git init --bare
 
 # Create django secret key
-DJANGO_KEY=$(python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())')
+DJANGO_KEY=$(pipenv run python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())')
 
 # Create hook
 echo "Creating deployment hook"
@@ -124,10 +126,11 @@ chown -R $USER_NAME:$USER_NAME /home/$USER_NAME/
 
 # Create services
 echo "Creating daphne service"
-wget https://raw.githubusercontent.com/JMS-Software-Development/general_scripts/master/django-daphne.service -O /etc/systemd/system/daphne.service
+wget https://raw.githubusercontent.com/JMS-Software-Development/general_scripts/master/django-daphne.service -O /etc/systemd/system/django-daphne.service
 sed -i "s/\$DJANGO_SECRET/$DJANGO_KEY/g" /etc/systemd/system/django-daphne.service
 sed -i "s/\$PROJECT_NAME/$PROJECT_NAME/g" /etc/systemd/system/django-daphne.service
 sed -i "s/\$SERVER_NAME/$SERVER_NAME/g" /etc/systemd/system/django-daphne.service
+sed -i "s/\$USER_NAME/$USER_NAME/g" /etc/systemd/system/django-daphne.service
 echo "Created daphne service"
 echo 
 
