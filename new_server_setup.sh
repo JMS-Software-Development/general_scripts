@@ -1,5 +1,5 @@
-read -p "Enter server name (eg medianasoftware.nl): " SERVER_NAME
-SERVER_NAME=${SERVER_NAME:-medianasoftware.nl}
+read -p "Enter server name (eg anansiwebdevelopment.nl): " SERVER_NAME
+SERVER_NAME=${SERVER_NAME:-anansiwebdevelopment.nl}
 
 read -p "Enter project name: " PROJECT_NAME
 PROJECT_NAME=${PROJECT_NAME:jad}
@@ -19,9 +19,11 @@ SETUP_NODE=${SETUP_NODE:-n}
 # add project + required settings name to environment
 echo PROJECT_NAME=$PROJECT_NAME >> /etc/environment
 echo USE_NODE=$SETUP_NODE >> /etc/environment
+echo USER_NAME=$USER_NAME >> /etc/environment
+echo SERVER_NAME=$SERVER_NAME >> /etc/environment
 
 apt update
-apt install -y nginx python3-venv python3-wheel gcc python3-dev redis-server pipenv
+apt install -y nginx python3-venv python3-wheel gcc python3-dev redis-server pipenv libpq-dev
 
 if [ $SETUP_NODE = "y" ]
 then
@@ -114,6 +116,7 @@ cd /home/$USER_NAME/$PROJECT_NAME.git
 git init --bare
 
 # Create django secret key
+cd /home/$USER_NAME/$PROJECT_NAME
 DJANGO_KEY=$(pipenv run python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())')
 
 # Create hook

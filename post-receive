@@ -61,7 +61,7 @@ do
   pipenv run env DJANGO_SECRET_KEY=none DJANGO_ALLOWED_HOSTS=127.0.0.1 ./manage.py collectstatic --noinput >> $LOGFILE
 
   print_double "\nRestarting services"
-  sudo systemctl restart django-daphne celery celerybeat
+  sudo systemctl restart django-daphne # celery celerybeat
 
   echo "Deployment complete, logs can be found at " $LOGFILE
   print_double "Deployment complete"
