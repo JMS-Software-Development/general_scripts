@@ -71,7 +71,8 @@ ufw enable
 
 # Setup production.py
 PROD_FILE="/home/$USER_NAME/$PROJECT_NAME/$PROJECT_NAME/production.py"
-if ! [[ -f "$PROD_FILE"]]; then
+if ! test -f "$PROD_FILE"
+then
     # If the prod file does not yet exist 
     echo "
     import os
