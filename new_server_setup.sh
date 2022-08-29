@@ -46,7 +46,7 @@ echo USER_NAME=$USER_NAME >> /etc/environment
 echo SERVER_NAME=$SERVER_NAME >> /etc/environment
 
 apt update
-apt install -y nginx python3-venv python3-wheel gcc python3-dev redis-server pipenv libpq-dev
+apt install -y nginx python3-venv python3-wheel gcc python3-dev redis-server pipenv libpq-dev git
 
 if [ $SETUP_NODE = "y" ]
 then
