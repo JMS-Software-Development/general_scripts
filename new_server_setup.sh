@@ -27,6 +27,11 @@ if ! [ "${USER_NAME}" ]; then
     USER_NAME=${USER_NAME:-anansi}
 fi
 
+if ! [ "${BRANCH}" ]; then
+    read -p "Enter deploy branch: " BRANCH
+    USER_NAME=${BRANCH:-main}
+fi
+
 if ! [ "${SETUP_POSTGRES}" ]; then
     read -p "Should this be a postgres server? (y/N): " SETUP_POSTGRES
     SETUP_POSTGRES=${SETUP_POSTGRES:-n}
@@ -44,6 +49,7 @@ echo USE_NODE=$SETUP_NODE >> /etc/environment
 echo SETUP_POSTGRES=$SETUP_POSTGRES >> /etc/environment
 echo USER_NAME=$USER_NAME >> /etc/environment
 echo SERVER_NAME=$SERVER_NAME >> /etc/environment
+echo BRANCH=$BRANCH >> /etc/environment
 
 apt update
 apt install -y nginx python3-venv python3-wheel gcc python3-dev redis-server pipenv libpq-dev git
@@ -83,51 +89,51 @@ if ! test -f "$PROD_FILE"
 then
     # If the prod file does not yet exist 
     echo "
-    import os
+import os
 
-    ALLOWED_HOSTS = ['$SERVER_NAME']
-    DEBUG = False
-    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '!@3m(1&m_y++@@-vl%eu*ai-vgh14!m1=jsn(o*xhhbbml-&5o')
+ALLOWED_HOSTS = ['$SERVER_NAME']
+DEBUG = False
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '!@3m(1&m_y++@@-vl%eu*ai-vgh14!m1=jsn(o*xhhbbml-&5o')
 
-    STATIC_ROOT = \"/var/www/$PROJECT_NAME/static\"
-    #STATICFILES_DIRS = [
-    #    os.path.join(BASE_DIR, \"static\"),
-    #]
+STATIC_ROOT = \"/var/www/$PROJECT_NAME/static\"
+#STATICFILES_DIRS = [
+#    os.path.join(BASE_DIR, \"static\"),
+#]
 
-    LOG_BASE_PATH = \"/home/$USER_NAME/$PROJECT_NAME-logs/\"
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'formatters': {
-            'verbose': {
-                'format': '{asctime} [{levelname}] {filename}:{lineno}:{funcName} {message}',
-                'style': '{',
-            },
-            'simple': {
-                'format': '{message}',
-                'style': '{',
-            },
+LOG_BASE_PATH = \"/home/$USER_NAME/$PROJECT_NAME-logs/\"
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} [{levelname}] {filename}:{lineno}:{funcName} {message}',
+            'style': '{',
         },
-        'handlers': {
-            'file': {
-                'level': 'DEBUG',
-                'class': 'logging.FileHandler',
-                'filename': LOG_BASE_PATH + './debug.log',
-                'formatter': 'verbose',
-            },
-            'console': {
-                'level': 'INFO',
-                'class': 'logging.StreamHandler',
-                'formatter': 'simple',
-            },
+        'simple': {
+            'format': '{message}',
+            'style': '{',
         },
-        'loggers': {
-            '': {
-                'handlers': ['console', 'file'],
-                'level': 'DEBUG',
-            },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': LOG_BASE_PATH + './debug.log',
+            'formatter': 'verbose',
         },
-    }
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+        },
+    },
+}
 
     " > /home/$USER_NAME/$PROJECT_NAME/$PROJECT_NAME/production.py
 fi

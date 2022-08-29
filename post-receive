@@ -4,7 +4,7 @@ REPO="/home/$USER_NAME/$PROJECT_NAME.git"
 TEMP="/home/$USER_NAME/tmp"
 
 GIT_DIR="/home/$USER_NAME/$PROJECT_NAME.git"
-BRANCH=master
+BRANCH=$BRANCH
 LOGFILE="/home/$USER_NAME/$PROJECT_NAME-logs/deploy.log"
 
 print_double() {
