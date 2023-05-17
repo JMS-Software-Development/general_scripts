@@ -29,7 +29,7 @@ fi
 
 if ! [ "${BRANCH}" ]; then
     read -p "Enter deploy branch: " BRANCH
-    USER_NAME=${BRANCH:-main}
+    BRANCH=${BRANCH:-main}
 fi
 
 if ! [ "${SETUP_POSTGRES}" ]; then
