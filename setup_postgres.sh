@@ -9,6 +9,7 @@ sudo -u postgres createdb $POSTGRES_DB
 sudo -u postgres psql -c "ALTER USER $POSTGRES_USER WITH ENCRYPTED PASSWORD '$PASSWORD';"
 sudo -u postgres psql -c "GRANT ALL privileges on database $POSTGRES_DB to $POSTGRES_USER;"
 
+# Setup production.py
 echo """
 DATABASES = {
     'default': {
@@ -21,3 +22,22 @@ DATABASES = {
     }
 }
 """ >> /home/$USER_NAME/$PROJECT_NAME/$PROJECT_NAME/production.py
+
+# Create pgpass file
+echo "localhost:5432:$POSTGRES_DB:$POSTGRES_USER:$PASSWORD" > /home/$USER_NAME/.pgpass
+chmod 600 /home/$USER_NAME/.pgpass
+
+# Create database backup script
+BACKUP_SCRIPT="/home/$USER_NAME/backup_database.sh"
+echo '#!/bin/bash' > $BACKUP_SCRIPT
+echo """
+pg_dump -F p $POSTGRES_DB > "/home/$USER_NAME/database-backups/db_backup_${POSTGRES_DB}_$(date +%Y-%m-%d)"
+find /home/$USER_NAME/database-backups/* -mtime +7 -delete
+""" >> $BACKUP_SCRIPT
+chmod +x $BACKUP_SCRIPT
+
+# Schedule database backup script to run every day
+crontab -l > mycron
+echo "0 5 * * * $BACKUP_SCRIPT" >> mycron
+crontab mycron
+rm mycron
