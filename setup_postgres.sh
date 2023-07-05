@@ -10,6 +10,9 @@ sudo -u postgres createdb $POSTGRES_DB
 sudo -u postgres psql -c "ALTER USER $POSTGRES_USER WITH ENCRYPTED PASSWORD '$PASSWORD';"
 sudo -u postgres psql -c "GRANT ALL privileges on database $POSTGRES_DB to $POSTGRES_USER;"
 
+echo POSTGRES_USER=$POSTGRES_USER >> /etc/environment
+echo POSTGRES_DB=$POSTGRES_DB >> /etc/environment
+
 # Setup production.py
 echo """
 DATABASES = {
@@ -32,7 +35,7 @@ chmod 600 /home/$USER_NAME/.pgpass
 BACKUP_SCRIPT="/home/$USER_NAME/backup_database.sh"
 echo '#!/bin/bash' > $BACKUP_SCRIPT
 echo """
-pg_dump -F p $POSTGRES_DB > "/home/$USER_NAME/database-backups/db_backup_${POSTGRES_DB}_$(date +%Y-%m-%d)"
+pg_dump -F p $POSTGRES_DB > "/home/$USER_NAME/database-backups/db_backup_$POSTGRES_DB_$(date +%Y-%m-%d)"
 find /home/$USER_NAME/database-backups/* -mtime +7 -delete
 """ >> $BACKUP_SCRIPT
 chmod +x $BACKUP_SCRIPT
