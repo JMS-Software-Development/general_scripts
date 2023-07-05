@@ -1,18 +1,16 @@
 [Unit]
 Description=Celery Beat Service
-After=network.target redis-server.service celery.service daphne.service
-Requires=redis-server.service celery.service
+After=network.target
 
 [Service]
 Type=simple
-User=mediana
-Group=mediana
-#EnvironmentFile=/etc/conf.d/celerybeat
-RuntimeDirectory=celerybeat
-WorkingDirectory=/home/mediana/jad
-ExecStart=/home/mediana/venv/bin/celery -A jad beat \
-    --pidfile=/var/run/celerybeat/1.pid --logfile=/var/log/celerybeat/info.log \
-    --loglevel=INFO -S django
+User=anansi
+Group=anansi
+EnvironmentFile=/etc/default/celerybeat
+WorkingDirectory=/home/anansi/realgen_seo_robots
+ExecStart=/bin/sh -c 'pipenv run ${CELERY_BIN} -A ${CELERY_APP} beat  \
+    --pidfile=${CELERYBEAT_PID_FILE} \
+    --logfile=${CELERYBEAT_LOG_FILE} --loglevel=${CELERYD_LOG_LEVEL}'
 Restart=always
 
 [Install]

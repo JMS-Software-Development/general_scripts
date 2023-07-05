@@ -1,21 +1,21 @@
 [Unit]
 Description=Celery Service
-After=network.target redis-server.service daphne.service
+After=network.target redis-server.service django-daphne.service
 Before=celerybeat.service
 Requires=redis-server.service
 
 [Service]
 Type=forking
-User=mediana
-Group=mediana
-EnvironmentFile=/etc/conf.d/celery
-RuntimeDirectory=celery
-WorkingDirectory=/home/mediana/jad
-ExecStart=/bin/sh -c '${CELERY_BIN} -A $CELERY_APP multi start $CELERYD_NODES \
+User=anansi
+Group=anansi
+EnvironmentFile=/etc/default/celeryd
+WorkingDirectory=/home/anansi/realgen_seo_robots
+ExecStart=/bin/sh -c 'pipenv run ${CELERY_BIN} -A $CELERY_APP multi start $CELERYD_NODES \
     --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} \
     --loglevel="${CELERYD_LOG_LEVEL}" $CELERYD_OPTS'
 ExecStop=/bin/sh -c '${CELERY_BIN} multi stopwait $CELERYD_NODES \
-    --pidfile=${CELERYD_PID_FILE} --loglevel="${CELERYD_LOG_LEVEL}"'
+    --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} \
+    --loglevel="${CELERYD_LOG_LEVEL}"'
 ExecReload=/bin/sh -c '${CELERY_BIN} -A $CELERY_APP multi restart $CELERYD_NODES \
     --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} \
     --loglevel="${CELERYD_LOG_LEVEL}" $CELERYD_OPTS'

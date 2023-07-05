@@ -1,15 +1,15 @@
 # Absolute or relative path to the 'celery' command:
-CELERY_BIN="/home/mediana/venv/bin/celery"
+#CELERY_BIN="/home/mediana/venv/bin/celery"
+CELERY_BIN="/usr/bin/celery"
 #CELERY_BIN="/virtualenvs/def/bin/celery"
-
 # App instance to use
 # comment out this line if you don't use an app
 #CELERY_APP="jad"
 # or fully qualified:
-CELERY_APP="jad.celery:app"
+CELERY_APP="seo_robots.celery:app"
 
 # Where to chdir at start.
-CELERYD_CHDIR="/home/mediana/jad"
+CELERYD_CHDIR="/home/anansi/realgen_seo_robots"
 
 # Extra command-line arguments to the worker
 #CELERYD_OPTS="--time-limit=300 --concurrency=8"
@@ -26,8 +26,8 @@ CELERYD_PID_FILE="/var/run/celerybeat/%n.pid"
 # Workers should run as an unprivileged user.
 #   You need to create this user manually (or you can choose
 #   a user/group combination that already exists (e.g., nobody).
-CELERYD_USER="celery"
-CELERYD_GROUP="celery"
+CELERYD_USER="anansi"
+CELERYD_GROUP="anansi"
 
 # If enabled pid and log directories will be created if missing,
 # and owned by the userid/group configured.
