@@ -28,10 +28,11 @@ DATABASES = {
 """ >> /home/$USER_NAME/$PROJECT_NAME/$PROJECT_NAME/production.py
 
 # Create pgpass file
-echo "localhost:5432:$POSTGRES_DB:$POSTGRES_USER:$PASSWORD" > /home/$USER_NAME/.pgpass
+sudo -u $USER_NAME echo "localhost:5432:$POSTGRES_DB:$POSTGRES_USER:$PASSWORD" > /home/$USER_NAME/.pgpass
 chmod 600 /home/$USER_NAME/.pgpass
 
 # Create database backup script
+su - $USER_NAME
 BACKUP_SCRIPT="/home/$USER_NAME/backup_database.sh"
 echo '#!/bin/bash' > $BACKUP_SCRIPT
 echo """
@@ -41,7 +42,7 @@ find /home/$USER_NAME/database-backups/* -mtime +7 -delete
 chmod +x $BACKUP_SCRIPT
 
 # Schedule database backup script to run every day
-crontab -l > mycron
-echo "0 5 * * * $BACKUP_SCRIPT" >> mycron
-crontab mycron
+sudo -u $USER_NAME crontab -l > mycron
+sudo -u $USER_NAME echo "0 5 * * * $BACKUP_SCRIPT" >> mycron
+sudo -u $USER_NAME crontab mycron
 rm mycron
