@@ -1,6 +1,6 @@
 # Names of nodes to start
 #   most people will only start one node:
-CELERYD_NODES="sonic_generation gpt_generation general posting"
+CELERYD_NODES="worker"
 #   but you can also start multiple and configure settings
 #   for each in CELERYD_OPTS
 #CELERYD_NODES="worker1 worker2 worker3"
@@ -13,15 +13,15 @@ CELERY_BIN="/usr/bin/celery"
 
 # App instance to use
 # comment out this line if you don't use an app
-CELERY_APP="seo_robots.celery:app"
+CELERY_APP="$PROJECT_NAME.celery:app"
 # or fully qualified:
 #CELERY_APP="proj.tasks:app"
 
 # Where to chdir at start.
-CELERYD_CHDIR="/home/anansi/realgen_seo_robots"
+CELERYD_CHDIR="/home/anansi/$PROJECT_NAME"
 
 # Extra command-line arguments to the worker
-CELERYD_OPTS="-Q:gpt_generation gpt_generation -Q:sonic_generation sonic_generation -Q:posting posting -Q:general general,celery -c:gpt_generation 10 -c:sonic_generation 5"
+CELERYD_OPTS=""
 # Configure node-specific settings by appending node name to arguments:
 #CELERYD_OPTS="--time-limit=300 -c 8 -c:worker2 4 -c:worker3 2 -Ofair:worker1"
 
@@ -41,3 +41,7 @@ CELERYD_GROUP="anansi"
 # If enabled pid and log directories will be created if missing,
 # and owned by the userid/group configured.
 CELERY_CREATE_DIRS=1
+
+# Beat config
+CELERYBEAT_PID_FILE="/var/run/celery/beat.pid"
+CELERYBEAT_LOG_FILE="/var/log/celery/beat.log"
